@@ -1,6 +1,12 @@
 from .base import *
 
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG')
+ALLOWED_HOSTS = ['*']
+
+SITE_URL = 'http://localhost:8000'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
