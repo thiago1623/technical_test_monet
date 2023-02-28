@@ -31,7 +31,7 @@
     add settings.ini in the path dashboard/dashboard/settings/ example: dashboard/dashboard/settings/settings.ini
     
     
-# If you use pycharm, you can modify your project in this way 
+# If you use pycharm, you can modify your project of this way 
     Go to file and open "settings" or you can use ctrl+alt+s
     select "project" and open python interpreter
     select in add interpreter and select existing
