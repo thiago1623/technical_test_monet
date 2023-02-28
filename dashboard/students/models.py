@@ -3,12 +3,12 @@ from django.contrib.auth.models import User as AuthUser
 
 
 class Student(models.Model):
-    user = models.ForeignKey(AuthUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(AuthUser, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.pk}, {self.name}'
+        return f'{self.pk}'
 
     class Meta:
         db_table = 'students'
@@ -24,7 +24,7 @@ class Answer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.pk}, {self.name}'
+        return f'{self.pk}, {self.is_correct}'
 
     class Meta:
         db_table = 'answers'
@@ -43,7 +43,7 @@ class Question(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.pk}, {self.text[:15]}'
+        return f'{self.pk}, {self.text}'
 
     class Meta:
         db_table = 'questions'
