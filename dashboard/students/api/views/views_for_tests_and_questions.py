@@ -2,10 +2,10 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from dashboard import basic_common_v1
-from ..serializers.test_and_question_serializers import TestSerializer
+from ..serializers.test_and_question_serializers import TestSerializer, AnswerSerializer
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def create_test_api(request, test_id=None):
     """
         create test with questions and answers:
@@ -28,5 +28,22 @@ def create_test_api(request, test_id=None):
             return JsonResponse(payload, status=404)
         return Response({
             'test': TestSerializer(test, user=user).data
+        })
+    return Response({'msg': 'method denied'}, status=400)
+
+
+@api_view(['POST'])
+def save_user_answer_selected(request):
+    """
+        save user answer for specific question
+    """
+    user, payload = basic_common_v1.authenticated_user_from_request(request)
+
+    if request.method == 'POST' and user:
+        answer, payload = basic_common_v1.save_answer(user_data=request.data, user=user)
+        if payload:
+            return JsonResponse(payload, status=404)
+        return Response({
+            'answer': AnswerSerializer(answer, user=user).data
         })
     return Response({'msg': 'method denied'}, status=400)

@@ -2,18 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User as AuthUser
 
 
-class Student(models.Model):
-    user = models.ForeignKey(AuthUser, null=True, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f'{self.pk}'
-
-    class Meta:
-        db_table = 'students'
-
-
 class Answer(models.Model):
     text = models.TextField(null=True)
     auth_user = models.ForeignKey(AuthUser, default=None, null=True, on_delete=models.SET_NULL)
@@ -63,3 +51,31 @@ class Test(models.Model):
 
     class Meta:
         db_table = 'tests'
+
+
+class Score(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.SET_NULL, null=True)
+    percentage = models.FloatField(null=True)   # between 0-100 this is to show on the UI!
+    passed = models.BooleanField(null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'id={self.pk}, test={self.answer.name}({self.test.pk}), percentage={self.percentage}'
+
+    class Meta:
+        db_table = 'scores'
+
+
+class Student(models.Model):
+    user = models.ForeignKey(AuthUser, null=True, on_delete=models.CASCADE)
+    scores = models.ManyToManyField(Score)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.pk}'
+
+    class Meta:
+        db_table = 'students'

@@ -9,4 +9,5 @@ urlpatterns = [
     re_path(r'^auth/login$', TokenObtainPairView.as_view()),
     re_path(r'^auth/refresh-token$', TokenRefreshView.as_view()),
     re_path(r'^auth/create-test(/(?P<test_id>\d+))?$', views_for_tests_and_questions.create_test_api),
+    re_path(r'^auth/save-answer$', views_for_tests_and_questions.save_user_answer_selected),
 ]

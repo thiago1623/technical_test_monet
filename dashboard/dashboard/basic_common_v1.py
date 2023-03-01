@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User as AuthUser
 
-from students.models import Student, Test, Question, Answer
+from students.models import Student, Test, Question, Answer, Score
 
 
 def get_user_from_serializer(serializer):
@@ -108,6 +108,20 @@ def create_test(data_test, user):
         return None, {'msg': 'Some parameters are missing'}
 
 
+def save_answer(user_data, user):
+    """
+        you can use this method for save the user answer
+    """
+    try:
+        answer, payload = get_answer(answer_id=user_data.get('user_answer_selected').get('pk'))
+        if payload:
+            return None, payload
+        save_score(answer, user)
+        return answer, None
+    except ValueError:
+        return None, {'msg': 'Some parameters are missing'}
+
+
 def get_test(test_id):
     """
         get specific test from test_id
@@ -116,3 +130,28 @@ def get_test(test_id):
         return Test.objects.get(pk=test_id), None
     except ObjectDoesNotExist:
         return None, {'msg': 'Test not found'}
+
+
+def save_score(answer, user):
+    """
+        create and save the user answer selected
+    """
+    if answer.is_correct:
+        score = Score.objects.create(percentage=100, passed=True)
+        user.scores.add(score)
+    else:
+        score = Score.objects.create(percentage=0, passed=False)
+        score.answer = answer
+        score.save()
+        user.scores.add(score)
+
+
+def get_answer(answer_id):
+    """
+        get specific answer from answer_id
+    """
+    try:
+        return Answer.objects.get(pk=answer_id), None
+    except ObjectDoesNotExist:
+        return None, {'msg': 'Test not found'}
+
