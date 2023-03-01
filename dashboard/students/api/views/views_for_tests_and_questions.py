@@ -1,8 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from dashboard import basic_common_v1
 from ..serializers.test_and_question_serializers import TestSerializer, AnswerSerializer
+from students.models import Score, Student
 
 
 @api_view(['POST', 'GET'])
@@ -47,3 +50,22 @@ def save_user_answer_selected(request):
             'answer': AnswerSerializer(answer, user=user).data
         })
     return Response({'msg': 'method denied'}, status=400)
+
+
+@login_required
+def view_student_answers(request):
+    student, payload = basic_common_v1.get_student_from_auth_user(user=request.user)
+    if payload:
+        return render(request, 'error.html', payload)
+    scores = Score.objects.filter(student=student)
+    if scores:
+        answers = []
+        for score in scores:
+            answers.append(score.answer)
+        context = {
+            'answers': answers,
+            'student': student.user,
+            'scores': scores
+        }
+        return render(request, 'view_student_answers.html', context)
+    return Response({'msg': 'empty score'})

@@ -62,7 +62,7 @@ class Score(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'id={self.pk}, test={self.answer.name}({self.test.pk}), percentage={self.percentage}'
+        return f'id={self.pk}'
 
     class Meta:
         db_table = 'scores'

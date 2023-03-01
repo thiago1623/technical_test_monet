@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Respuestas del Estudiante</title>
+</head>
+<body>
+    <h1>Respuestas del Estudiante {{ student }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>answer</th>
+                <th>created at date</th>
+                <th>passed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for score in scores %}
+            <tr>
+                <td>{{ score.answer.text }}</td>
+                <td>{{ score.answer.created_at }}</td>
+                <td>{{ score.passed }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

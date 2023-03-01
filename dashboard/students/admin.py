@@ -1,37 +1,37 @@
 from django import forms
 from django.forms import Media
 from django.contrib import admin
+from django.db import models
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from .models import Student, Test, Question, Answer
+from .models import Student, Test, Question, Answer, Score
 
 
-class AnswerInlineForm(forms.ModelForm):
-    class Meta:
-        model = Question.answers.through
-        fields = '__all__'
-        widgets = {
-            'answer': forms.CheckboxSelectMultiple(),
-        }
+class ScoreStudent(models.Model):
+    score = models.ForeignKey(Score, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
 
-class AnswerInline(admin.TabularInline):
+class ScoreInline(admin.TabularInline):
+    model = ScoreStudent
+    extra = 1
+    verbose_name_plural = 'Scores'
+
+
+class QuestionInline(admin.TabularInline):
     model = Question.answers.through
-    form = AnswerInlineForm
     extra = 0
-    verbose_name_plural = 'answers'
+    verbose_name_plural = 'Answers'
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [AnswerInline, ]
-    exclude = ('answers',)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == "correct_answers":
-            kwargs["queryset"] = Answer.objects.filter(question=request.resolver_match.kwargs['object_id'])
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
+    inlines = [QuestionInline]
 
 
-admin.site.register(Question, QuestionAdmin)
-admin.site.register(Student)
-admin.site.register(Test)
+class StudentAdmin(admin.ModelAdmin):
+    inlines = [ScoreInline]
+
+
 admin.site.register(Answer)
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Score)
+admin.site.register(Student, StudentAdmin)
